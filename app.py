@@ -23,37 +23,38 @@ st.set_page_config(
 st.markdown("""
 <style>
     /* Основний фон */
-    .stApp { background-color: #0D1117; color: #E6EDF3; }
-    [data-testid="stSidebar"] { background-color: #161B22; border-right: 1px solid #21262D; }
-    [data-testid="stSidebar"] * { color: #E6EDF3 !important; }
+    .stApp { background-color: #F5F7FA; color: #1A202C; }
+    [data-testid="stSidebar"] { background-color: #FFFFFF; border-right: 1px solid #E2E8F0; }
+    [data-testid="stSidebar"] * { color: #1A202C !important; }
 
     /* Метрики */
     [data-testid="stMetric"] {
-        background: #161B22;
-        border: 1px solid #21262D;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 16px 20px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
-    [data-testid="stMetricLabel"] { color: #8B949E !important; font-size: 13px !important; }
-    [data-testid="stMetricValue"] { color: #E6EDF3 !important; font-size: 28px !important; font-weight: 700 !important; }
+    [data-testid="stMetricLabel"] { color: #64748B !important; font-size: 13px !important; }
+    [data-testid="stMetricValue"] { color: #1A202C !important; font-size: 28px !important; font-weight: 700 !important; }
     [data-testid="stMetricDelta"] { font-size: 12px !important; }
 
     /* Заголовки секцій */
     .section-title {
-        color: #E6EDF3;
+        color: #1A202C;
         font-size: 16px;
         font-weight: 700;
         margin: 24px 0 8px 0;
         padding-bottom: 6px;
-        border-bottom: 1px solid #21262D;
+        border-bottom: 2px solid #E2E8F0;
     }
 
     /* Таблиця */
-    [data-testid="stDataFrame"] { background: #161B22; border-radius: 10px; }
-    .dataframe { background: #161B22 !important; color: #E6EDF3 !important; }
+    [data-testid="stDataFrame"] { background: #FFFFFF; border-radius: 10px; }
+    .dataframe { background: #FFFFFF !important; color: #1A202C !important; }
 
-    /* Кнопки вибору сторінки */
-    div[data-testid="stSelectbox"] > div { background: #21262D; border-radius: 8px; }
+    /* Selectbox */
+    div[data-testid="stSelectbox"] > div { background: #F1F5F9; border-radius: 8px; }
 
     /* Приховати зайве */
     #MainMenu { visibility: hidden; }
@@ -62,15 +63,16 @@ st.markdown("""
 
     /* Картка школи */
     .school-card {
-        background: #161B22;
-        border: 1px solid #21262D;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
         border-radius: 10px;
         padding: 12px 16px;
         margin-bottom: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
-    .rank-gold   { color: #FFD700; font-size: 20px; }
-    .rank-silver { color: #C0C0C0; font-size: 20px; }
-    .rank-bronze { color: #CD7F32; font-size: 20px; }
+    .rank-gold   { color: #D97706; font-size: 20px; }
+    .rank-silver { color: #94A3B8; font-size: 20px; }
+    .rank-bronze { color: #B45309; font-size: 20px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -92,11 +94,11 @@ COLORS = {
     "pink":   "#FF69B4", "lime":   "#7EE787",
 }
 PALETTE = list(COLORS.values())
-BG      = "#0D1117"
-CARD    = "#161B22"
-BORDER  = "#21262D"
-TEXT    = "#E6EDF3"
-MUTED   = "#8B949E"
+BG      = "#F5F7FA"
+CARD    = "#FFFFFF"
+BORDER  = "#E2E8F0"
+TEXT    = "#1A202C"
+MUTED   = "#64748B"
 
 def seed_val(school, year=0, key=""):
     return abs(hash(f"{school}{year}{key}")) % 10000
@@ -168,7 +170,7 @@ def axis_style(**kw):
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🏫 РАЙОНО")
-    st.markdown("<small style='color:#8B949E'>Моніторинг якості освіти</small>",
+    st.markdown("<small style='color:#64748B'>Моніторинг якості освіти</small>",
                 unsafe_allow_html=True)
     st.divider()
 
