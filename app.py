@@ -102,8 +102,36 @@ SCHOOLS = [
     "Вербівська філія",
     "Кліщівська філія",
     "Яришівська філія",
+    "Плебанівський ліцей",
+    "Перепільчинецька гімназія",
+    "Носиківська гімназія",
+    "Буднянська гімназія",
+    "Писарівська філія",
+    "Політанківська філія",
+    "Сапіжанська гімназія",
+    "Гибалівська гімназія",
+    "Голинчинецька гімназія",
+    "Деребчинський ліцей",
+    "Довжанський ліцей",
+    "Зведенівський ліцей",
+    "Івашковецька гімназія",
+    "Клекотинський ліцей",
+    "Козлівська гімназія",
+    "Копистиринська гімназія",
+    "Лозівська гімназія",
+    "Михайлівський ліцей",
+    "Пасинківська гімназія",
+    "Пеньківський ліцей",
+    "Покутинський ліцей",
+    "Рахнівсько-Лісовий ліцей",
+    "Рахнівсько-Лісовий ліцей №2",
+    "Руданська гімназія",
+    "Слободо-Шаргородський ліцей",
+    "Федорівський ліцей",
+    "Хоменківський ліцей",
+    "Юхимівський ліцей",
 ]
-SUBJECTS  = ["Математика", "Українська мова", "Англійська мова", "Історія", "Біологія"]
+SUBJECTS  = ["Математика", "Українська мова", "Англійська мова", "Історія", "Біологія", "Хімія", "Фізика", "Українська література"]
 YEARS     = [2021, 2022, 2023, 2024, 2025]
 MONTHS_LBL = ["Вер","Жов","Лис","Гру","Січ","Лют","Бер","Кві","Тра","Чер"]
 MONTHS_NUM = list(range(9, 13)) + list(range(1, 7))
@@ -198,7 +226,8 @@ with st.sidebar:
     page = st.selectbox(
         "Розділ",
         ["📊 Огляд", "📝 НМТ та успішність",
-         "📅 Відвідуваність", "👩‍🏫 Кадри", "🏫 Порівняння шкіл"],
+         "📅 Відвідуваність", "👩‍🏫 Кадри", "🏫 Порівняння шкіл",
+         "🗺️ Громада"],
         label_visibility="collapsed"
     )
 
@@ -688,3 +717,103 @@ elif page == "🏫 Порівняння шкіл":
         })
     df = pd.DataFrame(table_rows).sort_values("Індекс", ascending=False)
     st.dataframe(df, use_container_width=True, hide_index=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# СТОРІНКА 6 — ГРОМАДА
+# ═══════════════════════════════════════════════════════════════════════════════
+elif page == "🗺️ Громада":
+    st.title("🗺️ Шаргородська міська громада")
+
+    # ── Загальна статистика ──
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("🏙️ Місто", "1", "Шаргород")
+    col2.metric("🏘️ Селища", "4", "Лісничівка, Лукашівка, Мишівське, Оліхи")
+    col3.metric("🏡 Сел", "27", "населених пунктів")
+    col4.metric("📋 Старостинських округів", "9", "")
+
+    st.divider()
+
+    col_l, col_r = st.columns([1, 1])
+
+    # ── Населені пункти ──
+    with col_l:
+        section("🏙️ Місто")
+        st.markdown("""
+<div style='background:#FFFFFF;border:1px solid #E2E8F0;border-radius:10px;padding:14px 18px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06)'>
+  <span style='font-size:20px'>🏙️</span>&nbsp;&nbsp;<strong style='color:#1A202C;font-size:15px'>Шаргород</strong>
+  <span style='float:right;background:#2D8CF0;color:white;border-radius:6px;padding:2px 10px;font-size:12px'>адмін. центр</span>
+</div>
+""", unsafe_allow_html=True)
+
+        section("🏘️ Селища")
+        selyscha = ["Лісничівка", "Лукашівка", "Мишівське", "Оліхи"]
+        for s in selyscha:
+            st.markdown(f"""
+<div style='background:#FFFFFF;border:1px solid #E2E8F0;border-radius:8px;padding:10px 16px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.04)'>
+  <span style='font-size:16px'>🏘️</span>&nbsp;&nbsp;<span style='color:#1A202C;font-size:14px'>{s}</span>
+</div>""", unsafe_allow_html=True)
+
+        section("🏡 Села (27)")
+        villages = [
+            "Андріївка", "Борівське", "Будне", "Гибалівка", "Грелівка",
+            "Дерев'янки", "Дубинки", "Івашківці", "Калинівка", "Козлівка",
+            "Конатківці", "Копистирин", "Кропивня", "Лозова", "Мальовниче",
+            "Носиківка", "Пасинки", "Перепільчинці", "Писарівка", "Плебанівка",
+            "Політанки", "Поляна", "Роля", "Руданське", "Слобода-Шаргородська",
+            "Сурогатка", "Теклівка",
+        ]
+        # Display in 3 columns inside a card
+        v_cols = st.columns(3)
+        for i, v in enumerate(villages):
+            with v_cols[i % 3]:
+                st.markdown(f"""
+<div style='background:#F8FAFC;border:1px solid #E2E8F0;border-radius:7px;padding:7px 12px;margin-bottom:5px;font-size:13px;color:#374151'>
+  🏡 {v}
+</div>""", unsafe_allow_html=True)
+
+    # ── Старостинські округи + діаграма ──
+    with col_r:
+        section("📋 Старостинські округи")
+        starosty = [
+            ("Івашковецький",      "Івашківці, Калинівка, Дубинки"),
+            ("Козлівський",        "Козлівка, Борівське, Будне"),
+            ("Копистиринський",    "Копистирин, Конатківці, Гибалівка"),
+            ("Лозівський",         "Лозова, Грелівка, Дерев'янки"),
+            ("Носиківський",       "Носиківка, Андріївка, Пасинки"),
+            ("Перепільчинецький",  "Перепільчинці, Писарівка, Поляна"),
+            ("Плебанівський",      "Плебанівка, Мальовниче, Роля"),
+            ("Політанківський",    "Політанки, Кропивня, Теклівка"),
+            ("Руданський",         "Руданське, Слобода-Шаргородська, Сурогатка"),
+        ]
+        colors_s = [
+            "#2D8CF0","#18C964","#F5A524","#9353D3","#F31260",
+            "#06B7DB","#FF69B4","#7EE787","#FB923C",
+        ]
+        for i, (name, villages_in) in enumerate(starosty):
+            col = colors_s[i % len(colors_s)]
+            st.markdown(f"""
+<div style='background:#FFFFFF;border-left:4px solid {col};border-radius:0 10px 10px 0;
+     border-top:1px solid #E2E8F0;border-right:1px solid #E2E8F0;border-bottom:1px solid #E2E8F0;
+     padding:10px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.04)'>
+  <strong style='color:#1A202C;font-size:14px'>{name} округ</strong><br>
+  <span style='color:#64748B;font-size:12px'>📍 {villages_in}</span>
+</div>""", unsafe_allow_html=True)
+
+        st.divider()
+
+        # Pie: розподіл типів населених пунктів
+        section("📊 Структура населених пунктів")
+        fig = go.Figure(go.Pie(
+            labels=["Місто", "Селища", "Села"],
+            values=[1, 4, 27],
+            hole=0.5,
+            marker_colors=[COLORS["blue"], COLORS["amber"], COLORS["green"]],
+            textfont=dict(color=TEXT, size=13),
+            textinfo="label+value",
+        ))
+        fig.update_layout(
+            title="Всього 32 населених пункти",
+            **dark_layout(),
+            height=300,
+        )
+        st.plotly_chart(fig, use_container_width=True)
