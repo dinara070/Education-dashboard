@@ -53,8 +53,23 @@ st.markdown("""
     [data-testid="stDataFrame"] { background: #FFFFFF; border-radius: 10px; }
     .dataframe { background: #FFFFFF !important; color: #1A202C !important; }
 
-    /* Selectbox */
-    div[data-testid="stSelectbox"] > div { background: #F1F5F9; border-radius: 8px; }
+    /* Selectbox — темніший фон у сайдбарі */
+    [data-testid="stSidebar"] div[data-testid="stSelectbox"] > div > div {
+        background: #DDE3ED !important;
+        border: 1px solid #B8C4D4 !important;
+        border-radius: 8px !important;
+        color: #1A202C !important;
+    }
+    [data-testid="stSidebar"] div[data-testid="stSelectbox"] > div > div:hover {
+        background: #CDD5E0 !important;
+        border-color: #94A3B8 !important;
+    }
+    /* Підписи фільтрів */
+    [data-testid="stSidebar"] label {
+        color: #374151 !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+    }
 
     /* Приховати зайве */
     #MainMenu { visibility: hidden; }
