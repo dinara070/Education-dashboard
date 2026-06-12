@@ -11,6 +11,13 @@ import pandas as pd
 import numpy as np
 import random
 from datetime import datetime
+import io
+
+def to_excel(df):
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Data')
+    return output.getvalue()
 
 # ─── Конфігурація сторінки ───────────────────────────────────────────────────
 st.set_page_config(
@@ -237,6 +244,34 @@ with st.sidebar:
     sel_year    = st.selectbox("📅 Рік",       YEARS, index=len(YEARS)-1)
     sel_subject = st.selectbox("📚 Предмет",   SUBJECTS)
 
+    # ─── Блок експорту/імпорту ───────────────────────────────────────────────
+    st.divider()
+    st.markdown("**📂 Дані**")
+    
+    # Експорт поточних даних
+    if st.button("📥 Експорт у CSV"):
+        # Припускаючи, що функції nmt_score та attendance доступні у вашому коді
+        export_df = pd.DataFrame({
+            "Школа": SCHOOLS,
+            "Бал_НМТ": [nmt_score(s, sel_year, "Математика") for s in SCHOOLS],
+            "Відвідуваність": [attendance(s, 1) for s in SCHOOLS]
+        })
+        csv = export_df.to_csv(index=False).encode('utf-8')
+        st.download_button("Завантажити CSV", csv, "shargorod_data.csv", "text/csv")
+
+    # Імпорт даних
+    uploaded_file = st.file_uploader("📤 Імпорт даних (CSV/Excel)", type=["csv", "xlsx"])
+    if uploaded_file is not None:
+        try:
+            if uploaded_file.name.endswith('.csv'):
+                df_imported = pd.read_csv(uploaded_file)
+            else:
+                df_imported = pd.read_excel(uploaded_file)
+            st.success("Файл успішно завантажено!")
+            st.write("Попередній перегляд:", df_imported.head())
+        except Exception as e:
+            st.error(f"Помилка при читанні файлу: {e}")
+    
     st.divider()
     st.caption(f"Оновлено: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
 
