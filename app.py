@@ -443,11 +443,10 @@ elif page == "📝 НМТ та успішність":
         fig3.update_layout(title="Бали по всіх школах і предметах", **dark_layout())
         st.plotly_chart(fig3, use_container_width=True)
 
-section("Рейтинг шкіл по обраному предмету")
+    section("Рейтинг шкіл по обраному предмету")
     scores2 = [(s, nmt_score(s, sel_year, sel_subject)) for s in SCHOOLS]
     scores2.sort(key=lambda x: x[1], reverse=True)
-    
-    # Top-3 окремо
+
     top_cols = st.columns(3)
     medals = [("🥇", "#FFD700", "#FFF9E6"), ("🥈", "#A8A9AD", "#F5F5F5"), ("🥉", "#CD7F32", "#FDF3E7")]
     for i in range(3):
@@ -462,10 +461,9 @@ section("Рейтинг шкіл по обраному предмету")
   <div style='font-size:32px;font-weight:800;color:{color}'>{sc_val}</div>
   <div style='font-size:11px;color:#64748B'>балів НМТ</div>
 </div>""", unsafe_allow_html=True)
-    
+
     st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Решта як горизонтальний bar chart
+
     fig_rank = go.Figure(go.Bar(
         y=[f"#{i+1}  {sc[:25]}" for i, (sc, _) in enumerate(scores2)],
         x=[v for _, v in scores2],
