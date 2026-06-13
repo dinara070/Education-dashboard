@@ -399,7 +399,7 @@ elif page == "📝 НМТ та успішність":
             x=[str(y) for y in YEARS], y=vals,
             mode="lines+markers",
             name=subj,
-            line=dict(color=PALETTE[i], width=2.5),
+            line=dict(color=PALETTE[i % len(PALETTE)], width=2.5),
             marker=dict(size=7),
         ))
     fig.update_layout(title="Бали НМТ по роках", **dark_layout())
@@ -477,7 +477,7 @@ elif page == "📅 Відвідуваність":
             x=MONTHS_LBL, y=vals,
             mode="lines+markers",
             name=sc[:18],
-            line=dict(color=PALETTE[i], width=2),
+            line=dict(color=PALETTE[i % len(PALETTE)], width=2),
             marker=dict(size=6),
         ))
     fig.add_hline(y=95, line_dash="dot", line_color=COLORS["amber"],
