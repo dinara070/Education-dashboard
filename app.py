@@ -234,7 +234,7 @@ with st.sidebar:
         "Розділ",
         ["📊 Огляд", "📝 НМТ та успішність",
          "📅 Відвідуваність", "👩‍🏫 Кадри", "🏫 Порівняння шкіл",
-         "🗺️ Громада"],
+         "🗺️ Громада", "📰 Новини та події"],
         label_visibility="collapsed"
     )
 
@@ -877,3 +877,168 @@ elif page == "🗺️ Громада":
             height=300,
         )
         st.plotly_chart(fig, use_container_width=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# СТОРІНКА 7 — НОВИНИ ТА ПОДІЇ
+# ═══════════════════════════════════════════════════════════════════════════════
+elif page == "📰 Новини та події":
+    st.title("📰 Новини та події — Шаргородська громада")
+
+    # ── KPI ──
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("📰 Новин цього місяця", "12", "+3 vs минулий")
+    col2.metric("🎉 Заходів заплановано", "8", "на червень")
+    col3.metric("🏆 Досягнень учнів", "24", "+5 цього року")
+    col4.metric("📢 Оголошень", "5", "активних")
+
+    st.divider()
+
+    col_l, col_r = st.columns([3, 2])
+
+    with col_l:
+        section("📌 Останні новини")
+
+        news = [
+            {
+                "date": "10.06.2025",
+                "tag": "🏆 Досягнення",
+                "tag_color": "#18C964",
+                "title": "Учні Шаргородського ліцею №1 перемогли на обласній олімпіаді з математики",
+                "text": "Троє учнів здобули призові місця на обласному етапі Всеукраїнської олімпіади. Вітаємо переможців та їхніх вчителів!",
+                "school": "Шаргородський ліцей №1",
+            },
+            {
+                "date": "07.06.2025",
+                "tag": "📋 Адмінінформація",
+                "tag_color": "#2D8CF0",
+                "title": "Затверджено план роботи шкіл на 2025/2026 навчальний рік",
+                "text": "Відділ освіти затвердив календарний план заходів для всіх закладів громади на наступний навчальний рік.",
+                "school": "Відділ освіти",
+            },
+            {
+                "date": "03.06.2025",
+                "tag": "🎉 Захід",
+                "tag_color": "#9353D3",
+                "title": "День захисту дітей: святковий концерт у Шаргородській гімназії",
+                "text": "1 червня у гімназії відбувся великий святковий концерт за участі учнів усіх класів. Захід зібрав понад 300 глядачів.",
+                "school": "Шаргородська гімназія",
+            },
+            {
+                "date": "28.05.2025",
+                "tag": "🔧 Інфраструктура",
+                "tag_color": "#F5A524",
+                "title": "Завершено ремонт спортзалу у Мурафській гімназії",
+                "text": "Після капітального ремонту відкрито оновлений спортивний зал. Роботи фінансувались з районного бюджету.",
+                "school": "Мурафська гімназія",
+            },
+            {
+                "date": "22.05.2025",
+                "tag": "📚 Освіта",
+                "tag_color": "#06B7DB",
+                "title": "Старт пілотного проєкту цифрової освіти у трьох школах району",
+                "text": "Шаргородський ліцей №2, Плебанівський ліцей та Деребчинський ліцей розпочали пілот з впровадження цифрових інструментів навчання.",
+                "school": "Три заклади",
+            },
+            {
+                "date": "15.05.2025",
+                "tag": "🏆 Досягнення",
+                "tag_color": "#18C964",
+                "title": "Команда Носиківської гімназії — чемпіон районної спартакіади",
+                "text": "За підсумками весняної спартакіади серед шкіл громади перше місце посіла команда Носиківської гімназії.",
+                "school": "Носиківська гімназія",
+            },
+        ]
+
+        for item in news:
+            st.markdown(f"""
+<div style='background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;
+     padding:16px 20px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)'>
+  <div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:8px'>
+    <span style='background:{item["tag_color"]}22;color:{item["tag_color"]};
+          border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600'>
+      {item["tag"]}
+    </span>
+    <span style='color:#94A3B8;font-size:12px'>📅 {item["date"]}</span>
+  </div>
+  <div style='font-size:15px;font-weight:700;color:#1A202C;margin-bottom:6px'>
+    {item["title"]}
+  </div>
+  <div style='font-size:13px;color:#64748B;margin-bottom:8px'>
+    {item["text"]}
+  </div>
+  <div style='font-size:12px;color:#94A3B8'>
+    🏫 {item["school"]}
+  </div>
+</div>""", unsafe_allow_html=True)
+
+    with col_r:
+        section("🗓️ Заплановані заходи")
+
+        events = [
+            ("13.06.2025", "Випускний вечір — ліцей №1",        "#9353D3"),
+            ("14.06.2025", "Випускний вечір — гімназія",         "#9353D3"),
+            ("16.06.2025", "Педрада: підсумки року",             "#2D8CF0"),
+            ("20.06.2025", "Останній дзвоник — філії",           "#18C964"),
+            ("25.06.2025", "Нарада директорів шкіл",             "#F5A524"),
+            ("01.09.2025", "День знань — початок нового року",   "#F31260"),
+            ("10.09.2025", "Районна олімпіада з математики",     "#06B7DB"),
+            ("15.10.2025", "Батьківські збори у всіх школах",    "#FF69B4"),
+        ]
+
+        for date, title, color in events:
+            st.markdown(f"""
+<div style='background:#FFFFFF;border-left:4px solid {color};
+     border-radius:0 10px 10px 0;
+     border-top:1px solid #E2E8F0;border-right:1px solid #E2E8F0;
+     border-bottom:1px solid #E2E8F0;
+     padding:10px 14px;margin-bottom:8px;
+     box-shadow:0 1px 3px rgba(0,0,0,0.04)'>
+  <div style='font-size:11px;color:#94A3B8;margin-bottom:3px'>📅 {date}</div>
+  <div style='font-size:13px;font-weight:600;color:#1A202C'>{title}</div>
+</div>""", unsafe_allow_html=True)
+
+        st.divider()
+        section("📊 Новини за категоріями")
+
+        fig_pie = go.Figure(go.Pie(
+            labels=["Досягнення", "Заходи", "Адмінінфо", "Інфраструктура", "Освіта"],
+            values=[8, 6, 5, 4, 3],
+            hole=0.5,
+            marker_colors=[
+                COLORS["green"], COLORS["purple"],
+                COLORS["blue"],  COLORS["amber"], COLORS["teal"]
+            ],
+            textfont=dict(color=TEXT, size=12),
+            textinfo="label+percent",
+        ))
+        fig_pie.update_layout(
+            title="Розподіл новин",
+            height=280,
+            **dark_layout()
+        )
+        st.plotly_chart(fig_pie, use_container_width=True)
+
+    st.divider()
+    section("📣 Оголошення")
+
+    announcements = [
+        ("🔴", "Прийом документів до 1 класу триває до 30 червня 2025 року.", "#F31260"),
+        ("🟡", "Технічні роботи на сайті відділу освіти — 14–15 червня.", "#F5A524"),
+        ("🟢", "Відкрито реєстрацію на літній мовний табір при ліцеї №1.", "#18C964"),
+        ("🔵", "Опитування батьків щодо якості освіти — посилання на сайті громади.", "#2D8CF0"),
+        ("🟣", "Збір заявок на участь у програмі обміну вчителями — до 1 липня.", "#9353D3"),
+    ]
+
+    ann_cols = st.columns(len(announcements))
+    for col, (icon, text, color) in zip(ann_cols, announcements):
+        with col:
+            st.markdown(f"""
+<div style='background:#FFFFFF;border-top:4px solid {color};
+     border-radius:0 0 12px 12px;
+     border-left:1px solid #E2E8F0;border-right:1px solid #E2E8F0;
+     border-bottom:1px solid #E2E8F0;
+     padding:14px 12px;text-align:center;
+     box-shadow:0 1px 4px rgba(0,0,0,0.06);height:100%'>
+  <div style='font-size:24px;margin-bottom:8px'>{icon}</div>
+  <div style='font-size:12px;color:#374151;line-height:1.5'>{text}</div>
+</div>""", unsafe_allow_html=True)
