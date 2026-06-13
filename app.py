@@ -189,6 +189,21 @@ def dropout(school):
     random.seed(seed_val(school, 77))
     return random.randint(0, 8)
 
+def budget_data(school, year):
+    """Повертає бюджетні дані школи: (загальний, зарплати, комунальні, капремонт, інше) у тис. грн"""
+    random.seed(seed_val(school, year, "budget"))
+    total     = random.randint(1200, 4800)
+    salaries  = round(total * random.uniform(0.60, 0.72))
+    utilities = round(total * random.uniform(0.10, 0.18))
+    capital   = round(total * random.uniform(0.05, 0.12))
+    other     = total - salaries - utilities - capital
+    return total, salaries, utilities, capital, max(0, other)
+
+def budget_execution(school, year):
+    """Відсоток виконання бюджету"""
+    random.seed(seed_val(school, year, "exec"))
+    return round(random.uniform(78.0, 99.5), 1)
+
 def composite_index(school, year):
     avg_nmt = sum(nmt_score(school, year, s) for s in SUBJECTS) / len(SUBJECTS)
     avg_att = sum(attendance(school, m) for m in MONTHS_NUM) / len(MONTHS_NUM)
@@ -234,7 +249,7 @@ with st.sidebar:
         "Розділ",
         ["📊 Огляд", "📝 НМТ та успішність",
          "📅 Відвідуваність", "👩‍🏫 Кадри", "🏫 Порівняння шкіл",
-         "🗺️ Громада", "📰 Новини та події"],
+         "🗺️ Громада", "📰 Новини та події", "💰 Бюджет та фінансування"],
         label_visibility="collapsed"
     )
 
@@ -1028,3 +1043,189 @@ elif page == "📰 Новини та події":
   <div style='font-size:24px;margin-bottom:8px'>{icon}</div>
   <div style='font-size:12px;color:#374151;line-height:1.5'>{text}</div>
 </div>""", unsafe_allow_html=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# СТОРІНКА 8 — БЮДЖЕТ ТА ФІНАНСУВАННЯ
+# ═══════════════════════════════════════════════════════════════════════════════
+elif page == "💰 Бюджет та фінансування":
+    st.title("💰 Бюджет та фінансування — Шаргородський район")
+
+    # ── KPI ──
+    total_budgets = [budget_data(sc, sel_year)[0] for sc in SCHOOLS]
+    total_district = sum(total_budgets)
+    avg_exec = round(sum(budget_execution(sc, sel_year) for sc in SCHOOLS) / len(SCHOOLS), 1)
+    sel_total, sel_sal, sel_util, sel_cap, sel_other = budget_data(sel_school, sel_year)
+    sel_exec = budget_execution(sel_school, sel_year)
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("💰 Бюджет району",        f"{total_district:,} тис. грн",
+              f"+{random.randint(3,12)}% vs {sel_year-1}")
+    c2.metric("🏫 Бюджет обраної школи", f"{sel_total:,} тис. грн")
+    c3.metric("📊 Виконання (район)",    f"{avg_exec}%",
+              "✅ норма" if avg_exec >= 90 else "⚠️ нижче норми")
+    c4.metric("📊 Виконання (школа)",    f"{sel_exec}%",
+              "✅ норма" if sel_exec >= 90 else "⚠️ нижче норми")
+
+    st.divider()
+
+    col_l, col_r = st.columns(2)
+
+    # ── Donut: структура бюджету обраної школи ──
+    with col_l:
+        section(f"Структура бюджету — {sel_school}")
+        fig1 = go.Figure(go.Pie(
+            labels=["Зарплати", "Комунальні", "Капремонт", "Інше"],
+            values=[sel_sal, sel_util, sel_cap, sel_other],
+            hole=0.55,
+            marker_colors=[COLORS["blue"], COLORS["amber"], COLORS["purple"], COLORS["teal"]],
+            textfont=dict(color=TEXT, size=12),
+            textinfo="label+percent",
+        ))
+        fig1.update_layout(
+            title=f"Всього: {sel_total:,} тис. грн",
+            **dark_layout()
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+
+    # ── Bar: динаміка бюджету школи по роках ──
+    with col_r:
+        section(f"Динаміка бюджету по роках — {sel_school}")
+        year_totals   = [budget_data(sel_school, y)[0] for y in YEARS]
+        year_salaries = [budget_data(sel_school, y)[1] for y in YEARS]
+        year_util     = [budget_data(sel_school, y)[2] for y in YEARS]
+        year_cap      = [budget_data(sel_school, y)[3] for y in YEARS]
+        year_other    = [budget_data(sel_school, y)[4] for y in YEARS]
+
+        fig2 = go.Figure()
+        for label, vals, color in [
+            ("Зарплати",   year_salaries, COLORS["blue"]),
+            ("Комунальні", year_util,     COLORS["amber"]),
+            ("Капремонт",  year_cap,      COLORS["purple"]),
+            ("Інше",       year_other,    COLORS["teal"]),
+        ]:
+            fig2.add_trace(go.Bar(
+                name=label,
+                x=[str(y) for y in YEARS],
+                y=vals,
+                marker_color=color,
+            ))
+        fig2.update_layout(
+            barmode="stack",
+            title="тис. грн по роках",
+            **dark_layout()
+        )
+        fig2.update_xaxes(**axis_style())
+        fig2.update_yaxes(**axis_style())
+        st.plotly_chart(fig2, use_container_width=True)
+
+    # ── Horizontal bar: бюджети всіх шкіл ──
+    section(f"Бюджети всіх шкіл — {sel_year}")
+    school_budgets = [(sc, budget_data(sc, sel_year)[0]) for sc in SCHOOLS]
+    school_budgets.sort(key=lambda x: x[1], reverse=True)
+
+    fig3 = go.Figure(go.Bar(
+        y=[sc[:28] for sc, _ in school_budgets],
+        x=[v for _, v in school_budgets],
+        orientation="h",
+        marker_color=[
+            COLORS["green"]  if v >= 3500 else
+            COLORS["blue"]   if v >= 2500 else
+            COLORS["amber"]  if v >= 1800 else
+            COLORS["red"]    for _, v in school_budgets
+        ],
+        text=[f"{v:,}" for _, v in school_budgets],
+        textposition="outside",
+        textfont=dict(color=TEXT, size=11),
+    ))
+    fig3.update_layout(
+        title="Загальний бюджет (тис. грн)",
+        xaxis_range=[0, max(v for _, v in school_budgets) * 1.15],
+        height=820,
+        **dark_layout()
+    )
+    fig3.update_xaxes(**axis_style())
+    fig3.update_yaxes(**axis_style())
+    st.plotly_chart(fig3, use_container_width=True)
+
+    col3, col4 = st.columns(2)
+
+    # ── Gauge: виконання бюджету обраної школи ──
+    with col3:
+        section(f"Виконання бюджету — {sel_school}")
+        fig4 = go.Figure(go.Indicator(
+            mode="gauge+number+delta",
+            value=sel_exec,
+            delta={"reference": 95, "valueformat": ".1f",
+                   "increasing": {"color": COLORS["green"]},
+                   "decreasing": {"color": COLORS["red"]}},
+            gauge={
+                "axis": {"range": [0, 100], "tickcolor": MUTED,
+                          "tickfont": {"color": MUTED}},
+                "bar":  {"color": COLORS["blue"]},
+                "steps": [
+                    {"range": [0,  75], "color": "#FEE2E2"},
+                    {"range": [75, 90], "color": "#FEF9C3"},
+                    {"range": [90,100], "color": "#DCFCE7"},
+                ],
+                "threshold": {
+                    "line": {"color": COLORS["red"], "width": 3},
+                    "thickness": 0.75, "value": 90
+                },
+                "bgcolor": CARD,
+                "bordercolor": BORDER,
+            },
+            title={"text": "% виконання", "font": {"color": TEXT}},
+            number={"suffix": "%", "font": {"color": TEXT}},
+        ))
+        fig4.update_layout(height=300, **dark_layout())
+        st.plotly_chart(fig4, use_container_width=True)
+
+    # ── Bar: виконання бюджету по всіх школах ──
+    with col4:
+        section(f"Виконання бюджету по школах — {sel_year}")
+        exec_vals = [(sc, budget_execution(sc, sel_year)) for sc in SCHOOLS]
+        exec_vals.sort(key=lambda x: x[1], reverse=True)
+        fig5 = go.Figure(go.Bar(
+            y=[sc[:22] for sc, _ in exec_vals],
+            x=[v for _, v in exec_vals],
+            orientation="h",
+            marker_color=[
+                COLORS["green"] if v >= 95 else
+                COLORS["amber"] if v >= 85 else
+                COLORS["red"]   for _, v in exec_vals
+            ],
+            text=[f"{v}%" for _, v in exec_vals],
+            textposition="outside",
+            textfont=dict(color=TEXT, size=11),
+        ))
+        fig5.add_vline(x=90, line_dash="dot", line_color=COLORS["amber"],
+                       annotation_text="Норма 90%",
+                       annotation_font_color=COLORS["amber"])
+        fig5.update_layout(
+            title="% виконання",
+            xaxis_range=[60, 105],
+            height=820,
+            **dark_layout()
+        )
+        fig5.update_xaxes(**axis_style())
+        fig5.update_yaxes(**axis_style())
+        st.plotly_chart(fig5, use_container_width=True)
+
+    # ── Зведена таблиця ──
+    section("Зведена таблиця фінансування")
+    budget_rows = []
+    for sc in SCHOOLS:
+        tot, sal, util, cap, oth = budget_data(sc, sel_year)
+        exc = budget_execution(sc, sel_year)
+        budget_rows.append({
+            "Школа":          sc,
+            "Бюджет (тис.)":  tot,
+            "Зарплати":       sal,
+            "Комунальні":     util,
+            "Капремонт":      cap,
+            "Інше":           oth,
+            "Виконання %":    f"{exc}%",
+            "Статус":         "✅" if exc >= 90 else "⚠️" if exc >= 80 else "🔴",
+        })
+    df_budget = pd.DataFrame(budget_rows).sort_values("Бюджет (тис.)", ascending=False)
+    st.dataframe(df_budget, use_container_width=True, hide_index=True)
