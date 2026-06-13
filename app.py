@@ -247,10 +247,8 @@ with st.sidebar:
     # ─── Блок експорту/імпорту ───────────────────────────────────────────────
     st.divider()
     st.markdown("**📂 Дані**")
-    
-    # Експорт поточних даних
+
     if st.button("📥 Експорт у CSV"):
-        # Припускаючи, що функції nmt_score та attendance доступні у вашому коді
         export_df = pd.DataFrame({
             "Школа": SCHOOLS,
             "Бал_НМТ": [nmt_score(s, sel_year, "Математика") for s in SCHOOLS],
@@ -259,7 +257,6 @@ with st.sidebar:
         csv = export_df.to_csv(index=False).encode('utf-8')
         st.download_button("Завантажити CSV", csv, "shargorod_data.csv", "text/csv")
 
-    # Імпорт даних
     uploaded_file = st.file_uploader("📤 Імпорт даних (CSV/Excel)", type=["csv", "xlsx"])
     if uploaded_file is not None:
         try:
@@ -271,7 +268,7 @@ with st.sidebar:
             st.write("Попередній перегляд:", df_imported.head())
         except Exception as e:
             st.error(f"Помилка при читанні файлу: {e}")
-    
+
     st.divider()
     st.caption(f"Оновлено: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
 
@@ -292,7 +289,6 @@ if page == "📊 Огляд":
     exc, good, sat, poor = grade_dist(sel_school)
     drops = dropout(sel_school)
 
-    # KPI row
     c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("📝 Середній бал НМТ", avg_nmt, f"{avg_nmt - avg_prev:+d} vs минулий рік")
     c2.metric("📅 Відвідуваність",    f"{avg_att}%",
@@ -307,7 +303,6 @@ if page == "📊 Огляд":
 
     col_l, col_r = st.columns(2)
 
-    # Bar: NMT by subject
     with col_l:
         section("НМТ по предметах")
         scores = [nmt_score(sel_school, sel_year, s) for s in SUBJECTS]
@@ -327,7 +322,6 @@ if page == "📊 Огляд":
         fig.update_yaxes(**axis_style())
         st.plotly_chart(fig, use_container_width=True)
 
-    # Line: Attendance by month
     with col_r:
         section("Відвідуваність по місяцях")
         att_vals = [attendance(sel_school, m) for m in MONTHS_NUM]
@@ -355,7 +349,6 @@ if page == "📊 Огляд":
 
     col3, col4 = st.columns(2)
 
-    # Donut: Grade distribution
     with col3:
         section("Розподіл успішності")
         fig3 = go.Figure(go.Pie(
@@ -369,7 +362,6 @@ if page == "📊 Огляд":
         fig3.update_layout(title="Успішність учнів", **dark_layout())
         st.plotly_chart(fig3, use_container_width=True)
 
-    # Bar: Teacher load
     with col4:
         section("Навантаження вчителів")
         fig4 = go.Figure(go.Bar(
@@ -784,7 +776,6 @@ elif page == "🏫 Порівняння шкіл":
 elif page == "🗺️ Громада":
     st.title("🗺️ Шаргородська міська громада")
 
-    # ── Загальна статистика ──
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("🏙️ Місто", "1", "Шаргород")
     col2.metric("🏘️ Селища", "4", "Лісничівка, Лукашівка, Мишівське, Оліхи")
@@ -795,7 +786,6 @@ elif page == "🗺️ Громада":
 
     col_l, col_r = st.columns([1, 1])
 
-    # ── Населені пункти ──
     with col_l:
         section("🏙️ Місто")
         st.markdown("""
@@ -822,7 +812,6 @@ elif page == "🗺️ Громада":
             "Політанки", "Поляна", "Роля", "Руданське", "Слобода-Шаргородська",
             "Сурогатка", "Теклівка",
         ]
-        # Display in 3 columns inside a card
         v_cols = st.columns(3)
         for i, v in enumerate(villages):
             with v_cols[i % 3]:
@@ -831,7 +820,6 @@ elif page == "🗺️ Громада":
   🏡 {v}
 </div>""", unsafe_allow_html=True)
 
-    # ── Старостинські округи + діаграма ──
     with col_r:
         section("📋 Старостинські округи")
         starosty = [
@@ -861,7 +849,6 @@ elif page == "🗺️ Громада":
 
         st.divider()
 
-        # Pie: розподіл типів населених пунктів
         section("📊 Структура населених пунктів")
         fig = go.Figure(go.Pie(
             labels=["Місто", "Селища", "Села"],
@@ -884,7 +871,6 @@ elif page == "🗺️ Громада":
 elif page == "📰 Новини та події":
     st.title("📰 Новини та події — Шаргородська громада")
 
-    # ── KPI ──
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("📰 Новин цього місяця", "12", "+3 vs минулий")
     col2.metric("🎉 Заходів заплановано", "8", "на червень")
