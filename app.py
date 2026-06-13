@@ -443,25 +443,52 @@ elif page == "📝 НМТ та успішність":
         fig3.update_layout(title="Бали по всіх школах і предметах", **dark_layout())
         st.plotly_chart(fig3, use_container_width=True)
 
-    section("Рейтинг шкіл по обраному предмету")
+section("Рейтинг шкіл по обраному предмету")
     scores2 = [(s, nmt_score(s, sel_year, sel_subject)) for s in SCHOOLS]
     scores2.sort(key=lambda x: x[1], reverse=True)
-    medals = ["🥇", "🥈", "🥉"]
-    cols = st.columns(len(SCHOOLS))
-    for i, (sc, sc_val) in enumerate(scores2):
-        with cols[i]:
-            medal = medals[i] if i < 3 else f"#{i+1}"
-            color = "#FFD700" if i == 0 else "#C0C0C0" if i == 1 else \
-                    "#CD7F32" if i == 2 else MUTED
-            st.markdown(
-                f'<div style="background:{CARD};border:1px solid {BORDER};'
-                f'border-radius:10px;padding:12px;text-align:center">'
-                f'<div style="font-size:24px">{medal}</div>'
-                f'<div style="font-size:11px;color:{MUTED}">{sc[:18]}</div>'
-                f'<div style="font-size:22px;font-weight:700;color:{color}">{sc_val}</div>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
+    
+    # Top-3 окремо
+    top_cols = st.columns(3)
+    medals = [("🥇", "#FFD700", "#FFF9E6"), ("🥈", "#A8A9AD", "#F5F5F5"), ("🥉", "#CD7F32", "#FDF3E7")]
+    for i in range(3):
+        sc, sc_val = scores2[i]
+        medal, color, bg = medals[i]
+        with top_cols[i]:
+            st.markdown(f"""
+<div style='background:{bg};border:2px solid {color};border-radius:14px;
+     padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.10)'>
+  <div style='font-size:36px'>{medal}</div>
+  <div style='font-size:13px;color:#374151;font-weight:600;margin:8px 0 4px'>{sc}</div>
+  <div style='font-size:32px;font-weight:800;color:{color}'>{sc_val}</div>
+  <div style='font-size:11px;color:#64748B'>балів НМТ</div>
+</div>""", unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Решта як горизонтальний bar chart
+    fig_rank = go.Figure(go.Bar(
+        y=[f"#{i+1}  {sc[:25]}" for i, (sc, _) in enumerate(scores2)],
+        x=[v for _, v in scores2],
+        orientation="h",
+        marker_color=[
+            COLORS["green"] if v == scores2[0][1] else
+            COLORS["blue"]  if v >= 160 else
+            COLORS["amber"] if v >= 145 else
+            COLORS["red"]   for _, v in scores2
+        ],
+        text=[str(v) for _, v in scores2],
+        textposition="outside",
+        textfont=dict(color=TEXT, size=12),
+    ))
+    fig_rank.update_layout(
+        title=f"Повний рейтинг — {sel_subject} {sel_year}",
+        xaxis_range=[95, 205],
+        height=900,
+        **dark_layout()
+    )
+    fig_rank.update_xaxes(**axis_style())
+    fig_rank.update_yaxes(**axis_style())
+    st.plotly_chart(fig_rank, use_container_width=True)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # СТОРІНКА 3 — ВІДВІДУВАНІСТЬ
